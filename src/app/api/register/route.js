@@ -1,3 +1,4 @@
+import { hashPassword } from "@/lib/auth";
 export async function GET(req, res) {
 
   // Make a note we are on
@@ -10,23 +11,24 @@ export async function GET(req, res) {
   const { searchParams } = new URL(req.url)
   const email = searchParams.get('email')
   const pass = searchParams.get('pass')
-  const dob = searchParams.get('dob')
-  const address = searchParams.get('address')
+  const hashedPassword = await hashPassword(pass);
+  // const dob = searchParams.get('dob')
+  // const address = searchParams.get('address')
 
 
 
   console.log(email);
-  console.log(pass);
-  console.log(dob);
-  console.log(address);
+  console.log(hashedPassword);
+  // console.log(dob);
+  // console.log(address);
 
 
  // =================================================
   const { MongoClient } = require('mongodb');
 
 
-  const url = 'mongodb://root:example@localhost:27017/admin';
-  const client = new MongoClient(url);
+  // const url = 'mongodb://root:example@localhost:27017/admin';
+  const client = new MongoClient(process.env.MONGO_URI);
   
  
   const dbName = 'app'; // database name
@@ -37,7 +39,8 @@ export async function GET(req, res) {
   const collection = db.collection('login'); // collection name
 
 
-  const findResult = await collection.insertOne({"email": email, "pass": pass, "dob": dob, "address": address});
+  // const findResult = await collection.insertOne({"email": email, "pass": hashedPassword, "dob": dob, "address": address});
+  const findResult = await collection.insertOne({"email": email, "pass": hashedPassword});
   console.log('Found documents =>', findResult);
 
  let valid=true;

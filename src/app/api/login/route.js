@@ -1,3 +1,5 @@
+import { verifyPassword } from "@/lib/auth";
+
 export async function GET(req, res) {
 
   // Make a note we are on
@@ -10,6 +12,8 @@ export async function GET(req, res) {
   const { searchParams } = new URL(req.url)
   const email = searchParams.get('email')
   const pass = searchParams.get('pass')
+ 
+
 
   console.log(email);
   console.log(pass);
@@ -17,8 +21,8 @@ export async function GET(req, res) {
  // =================================================
   const { MongoClient } = require('mongodb');
 
-  const url = 'mongodb://root:example@localhost:27017/admin';
-  const client = new MongoClient(url);
+  // const url = 'mongodb://root:example@localhost:27017/admin';
+  const client = new MongoClient(process.env.MONGO_URI);
   
  
   const dbName = 'app'; // database name
@@ -26,21 +30,28 @@ export async function GET(req, res) {
   await client.connect();
   console.log('Connected successfully to server');
   const db = client.db(dbName);
+
   const collection = db.collection('login'); // collection name
 
+  
 
-  const findResult = await collection.find({"username": "sample@test.com"}).toArray();
+
+  const findResult = await collection.find({"email": email}).toArray();
+  
+
   console.log('Found documents =>', findResult);
+  const passvalid = await verifyPassword(pass, findResult[0].pass);
+  console.log("password valid: " + passvalid)
 
-  let valid = false
-  if(findResult.length >0 ){
-      valid = true;
-      console.log("login valid")
-  } else {
+  // let valid = false
+  // if(findResult.length >0 ){
+  //     valid = true;
+  //     console.log("login valid")
+  // } else {
 
-    valid = false;
-    console.log("login invalid")
-  }
+  //   valid = false;
+  //   console.log("login invalid")
+  // }
 
 
  //==========================================================
@@ -50,6 +61,6 @@ export async function GET(req, res) {
 
 
   // at the end of the process we need to send something back.
-  return Response.json({ "data":"" + valid + ""})
+  return Response.json({ "data":"" + passvalid + ""})
 }
 
