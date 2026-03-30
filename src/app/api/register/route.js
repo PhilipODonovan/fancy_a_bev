@@ -45,54 +45,5 @@ export async function POST(req, res) {
 
 
 
-//   // get the values
-//   // that were sent across to us.
-//   const { searchParams } = new URL(req.url)
-//   const username = searchParams.get('username')
-//   const email = searchParams.get('email')
-//   const pass = searchParams.get('pass')
-//   const hashedPassword = await hashPassword(pass);
-//   // const dob = searchParams.get('dob')
-//   // const address = searchParams.get('address')
-
-
-
-//   console.log(email);
-//   console.log(hashedPassword);
-//   // console.log(dob);
-//   // console.log(address);
-
-
-//  // =================================================
-//   const { MongoClient } = require('mongodb');
-
-
-//   // const url = 'mongodb://root:example@localhost:27017/admin';
-//   const client = new MongoClient(process.env.MONGO_URI);
-  
- 
-//   const dbName = 'app'; // database name
-
-//   await client.connect();
-//   console.log('Connected successfully to server');
-//   const db = client.db(dbName);
-//   const collection = db.collection('login'); // collection name
-
-
-//   // const findResult = await collection.insertOne({"email": email, "pass": hashedPassword, "dob": dob, "address": address});
-//   const findResult = await collection.insertOne({"username": username, "email": email, "pass": hashedPassword});
-//   console.log('Found documents =>', findResult);
-
-//  let valid=true;
-
-
-//  //==========================================================
-
-
-
-
-
-//   // at the end of the process we need to send something back.
-//   return Response.json({ "data":"" + valid + ""})
 }
 

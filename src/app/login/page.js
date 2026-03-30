@@ -1,76 +1,49 @@
 'use client';
-
-
-import Script from 'next/script';
-import Image from 'next/image';
 import * as React from 'react';
+import Image from 'next/image';
+import {useRouter} from "next/navigation";
+import axios from "axios";
+import Link from "next/link"
 
 
 
+export default function LoginPage() {
 
+const router = useRouter();
 
+const [error, setError] = React.useState("");
 
-export default function Page() {
+const[form, setForm] = React.useState({
+  email: "",
+  pass: "",
+});
 
-
-  
-
-  /*
-  This function does the actual work
-  calling the fetch to get things from the database.
-  */ 
-  async function runDBCallAsync(url) {
-
-
-    const res = await fetch(url);
-    const data = await res.json();
-
- 
-    if(data.data== "valid"){
-      console.log("login is valid!")
-
+const onLogin = async (e) => {
+  try {
+    e.preventDefault();
+    const res = await axios.post(`api/login`, 
+      {
       
+      email: form.email,
+      password: form.pass
+    });
+    if(res.data.data == "true"){
+     
+      console.log("Sent email:" + form.email);
+    console.log("Sent pass:" + form.pass);
+      router.push("/dashboard");
     } else {
-
-      console.log("not valid  ")
+      setError("Login failed. Please try again.");
     }
+  } catch (err) {
+    setError("An error occurred. Please try again.");
   }
-
-
-  /*
-
-  When the button is clicked, this is the event that is fired.
-  The first thing we need to do is prevent the default refresh of the page.
-  */
-	const handleSubmit = (event) => {
-		
-		console.log("handling submit");
-
-
-    event.preventDefault();
-  
-		const data = new FormData(event.currentTarget);
-
-
-    let email = data.get('email')
-		let pass = data.get('pass')
-
-    console.log("Sent email:" + email)
-    console.log("Sent pass:" + pass)
-
-
-    runDBCallAsync(`api/login?email=${email}&pass=${pass}`)
-
-
-
-
-  }; // end handler
+};
 
 
 
   return (
-
-    <>
+<>
 
       <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
@@ -80,13 +53,14 @@ export default function Page() {
             className="mx-auto h-10 w-auto"
             width={32}
             height={32}
-
           />
-          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Sign in to your account</h2>
+          <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Log in to your account</h2>
         </div>
+      
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" onSubmit={handleSubmit} className="space-y-6">
+          <form action="#" method="POST" onSubmit={onLogin} className="space-y-6">
+ 
             <div>
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-500">
                 Email address
@@ -96,6 +70,8 @@ export default function Page() {
                   id="email"
                   name="email"
                   type="email"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })} 
                   required
                   autoComplete="email"
                   className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-black/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
@@ -108,11 +84,7 @@ export default function Page() {
                 <label htmlFor="pass" className="block text-sm/6 font-medium text-gray-500">
                   Password
                 </label>
-                <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
-                    Forgot password?
-                  </a>
-                </div>
+
               </div>
               <div className="mt-2">
                 <input
@@ -120,6 +92,8 @@ export default function Page() {
                   name="pass"
                   type="password"
                   required
+                  value={form.pass}
+                  onChange={(e) => setForm({ ...form, pass: e.target.value })}  
                   autoComplete="current-password"
                   className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base outline-1 -outline-offset-1 outline-black/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                 />
@@ -128,20 +102,21 @@ export default function Page() {
 
             <div>
               <button
-                type="submit"
+                type= "submit"
                 className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
               >
-                Sign in
+                Login
               </button>
             </div>
           </form>
 
-          <p className="mt-10 text-center text-sm/6 text-gray-400">
-            Not a member?{' '}
-            <a href="/register" className="font-semibold text-indigo-400 hover:text-indigo-300">
-              Register here
-            </a>
+        <p className="mt-6 text-center text-sm text-gray-400">
+                    Don’t have an account?{" "}
+                    <Link href="/register" className="text-indigo-500 hover:text-indigo-400">
+                      Register here
+                    </Link>
           </p>
+
         </div>
       </div>
     </>

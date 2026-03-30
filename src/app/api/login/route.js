@@ -1,66 +1,70 @@
-import { verifyPassword } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth";
+import {connect} from "@/lib/dbConfig";
+import User from "@/models/userModel";
+import { NextRequest, NextResponse } from "next/server";
+import bcryptjs from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-export async function GET(req, res) {
+
+export async function POST(req, res) {
 
   // Make a note we are on
   // the api. This goes to the console.
   console.log("in the api page")
 
+  connect()
+  // Calls the connect function from lib.
 
-  // get the values
-  // that were sent across to us.
-  const { searchParams } = new URL(req.url)
-  const email = searchParams.get('email')
-  const pass = searchParams.get('pass')
- 
+  try {
+    const reqBody = await req.json();
+    const { email, password } = reqBody;
 
+    // Check if the user exists
+    const existingUser = await User.findOne({ email });
+    if (!existingUser) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
+    }
+    
+    // Verify the password
+    const isPasswordValid = await bcryptjs.compare(password, existingUser.password);
+    if (!isPasswordValid) {
+      return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
+    }
 
-  console.log(email);
-  console.log(pass);
+    
+    // create token data
+    const tokenData = {
+      id: existingUser._id,
+      username: existingUser.username,
+      email: existingUser.email,    };
 
- // =================================================
-  const { MongoClient } = require('mongodb');
+    // create JWT token
+    const token = jwt.sign(tokenData, process.env.TOKEN_SECRET, {
+      expiresIn: "1d",
+    });
 
-  // const url = 'mongodb://root:example@localhost:27017/admin';
-  const client = new MongoClient(process.env.MONGO_URI);
-  
- 
-  const dbName = 'app'; // database name
-
-  await client.connect();
-  console.log('Connected successfully to server');
-  const db = client.db(dbName);
-
-  const collection = db.collection('login'); // collection name
-
-  
-
-
-  const findResult = await collection.find({"email": email}).toArray();
-  
-
-  console.log('Found documents =>', findResult);
-  const passvalid = await verifyPassword(pass, findResult[0].pass);
-  console.log("password valid: " + passvalid)
-
-  // let valid = false
-  // if(findResult.length >0 ){
-  //     valid = true;
-  //     console.log("login valid")
-  // } else {
-
-  //   valid = false;
-  //   console.log("login invalid")
-  // }
+    
+    const response = new Response(
+      JSON.stringify({ message: "Login successful", success: true, data: "true" }),
+      { status: 200 }
+    );
 
 
- //==========================================================
+   // set the cookie
+    response.headers.append(
+      "Set-Cookie",
+      `token=${token}; HttpOnly; Path=/; Max-Age=86400`
+    );
 
+    return response;
 
+  } catch (err) {
+    console.error(err);
+    
+    return new Response(
+      JSON.stringify({ error: "Internal Server Error", data: "false" }),
+      { status: 500 }
+    );
 
-
-
-  // at the end of the process we need to send something back.
-  return Response.json({ "data":"" + passvalid + ""})
-}
-
+  }
+} 

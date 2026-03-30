@@ -3,7 +3,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import {useRouter} from "next/navigation";
 import axios from "axios";
-import Link from "next/link";
+import Link from "next/link"
 
 
 export default function Page() {
@@ -183,7 +183,12 @@ const onRegister = async (e) => {
               </button>
             </div>
           </form>
-
+        <p className="mt-6 text-center text-sm text-gray-400">
+                    Alreadyhave an account?{" "}
+                    <Link href="/login" className="text-indigo-500 hover:text-indigo-400">
+                      Login here
+                    </Link>
+          </p>
         </div>
       </div>
     </>
