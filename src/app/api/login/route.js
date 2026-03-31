@@ -1,70 +1,72 @@
-import { hashPassword } from "@/lib/auth";
-import {connect} from "@/lib/dbConfig";
+import { connect } from "@/lib/dbConfig";
 import User from "@/models/userModel";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+connect();
 
-export async function POST(req, res) {
+export async function POST(req) {
+  console.log("In the login API");
 
-  // Make a note we are on
-  // the api. This goes to the console.
-  console.log("in the api page")
-
-  connect()
-  // Calls the connect function from lib.
 
   try {
-    const reqBody = await req.json();
-    const { email, password } = reqBody;
+    const { email, password } = await req.json();
+    console.log("Request body:", { email, password });
 
-    // Check if the user exists
+    // Lookup user
     const existingUser = await User.findOne({ email });
     if (!existingUser) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 400 }
+      );
     }
-    
-    // Verify the password
+
+    // Check password
     const isPasswordValid = await bcryptjs.compare(password, existingUser.password);
     if (!isPasswordValid) {
-      return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid email or password" },
+        { status: 400 }
+      );
     }
 
-    
-    // create token data
-    const tokenData = {
-      id: existingUser._id,
-      username: existingUser.username,
-      email: existingUser.email,    };
+    // Create token
+    const token = jwt.sign(
+      {
+        id: existingUser._id,
+        username: existingUser.username,
+        email: existingUser.email,
+      },
+      process.env.TOKEN_SECRET,
+      { expiresIn: "1d" }
+    );
 
-    // create JWT token
-    const token = jwt.sign(tokenData, process.env.TOKEN_SECRET, {
-      expiresIn: "1d",
+    // Build response
+    const response = NextResponse.json({
+      message: "Login successful",
+      success: true,
     });
 
-    
-    const response = new Response(
-      JSON.stringify({ message: "Login successful", success: true, data: "true" }),
-      { status: 200 }
-    );
-
-
-   // set the cookie
-    response.headers.append(
-      "Set-Cookie",
-      `token=${token}; HttpOnly; Path=/; Max-Age=86400`
-    );
+    // Set cookie
+    response.cookies.set({
+      name: "token",
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24,
+    });
 
     return response;
 
   } catch (err) {
-    console.error(err);
-    
-    return new Response(
-      JSON.stringify({ error: "Internal Server Error", data: "false" }),
+    console.error("LOGIN ERROR:", err);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
       { status: 500 }
     );
-
   }
-} 
+}

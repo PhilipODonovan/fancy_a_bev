@@ -21,16 +21,22 @@ const[form, setForm] = React.useState({
 const onLogin = async (e) => {
   try {
     e.preventDefault();
-    const res = await axios.post(`api/login`, 
+    const res = await axios.post(`/api/login`, 
       {
       
       email: form.email,
       password: form.pass
-    });
-    if(res.data.data == "true"){
+    },
+      {withCredentials: true  });
+
+console.log("FULL API RESPONSE:", res);
+console.log("RESPONSE BODY:", res.data);
+
+
+    if(res.data.success === true) {
      
       console.log("Sent email:" + form.email);
-    console.log("Sent pass:" + form.pass);
+      console.log("Sent pass:" + form.pass);
       router.push("/dashboard");
     } else {
       setError("Login failed. Please try again.");
@@ -59,7 +65,7 @@ const onLogin = async (e) => {
       
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form action="#" method="POST" onSubmit={onLogin} className="space-y-6">
+          <form onSubmit={onLogin} className="space-y-6">
  
             <div>
               <label htmlFor="email" className="block text-sm/6 font-medium text-gray-500">
