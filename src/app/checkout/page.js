@@ -12,26 +12,14 @@ import { useState, useEffect } from 'react'
 export default function Page() {
 
 
-  //
-  // function for putting items into the shopping cart.
-  //
-  function putInCart(pname){
 
-    console.log("putting in cart: " + pname)
-
-
-    fetch("api/putInCart?pname="+pname);
-
-
- 
-  }
 
 
 
 
 
   const [data, setData] = useState(null)
-  const [weather, setWeatherData] = useState(0)
+ 
  
   useEffect(() => {
     fetch('api/getProducts')
@@ -42,11 +30,13 @@ export default function Page() {
 
 
 
-
   }, [])
  
 
   if (!data) return <p>No data</p>
+
+
+
 
 
 

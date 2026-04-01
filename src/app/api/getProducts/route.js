@@ -1,40 +1,31 @@
+import { connect } from "@/lib/dbConfig";
+import { NextResponse, Response } from 'next/server'  
+import Bev from '@/models/bevModel';
+
 export async function GET(req, res) {
+
+  try {
 
     // Make a note we are on
     // the api. This goes to the console.
-    console.log("in the api page")
+  console.log("in the api page")
+
+
+  connect();
+
+    console.log('Connected successfully to server');
+    const bevList = await Bev.find({});
+  
+    console.log('Found documents =>', bevList);
 
   
-    // =================================================
-    const { MongoClient } = require('mongodb');
-  
-   // const url = 'mongodb://root:example@localhost:27017/';
-   
-   const url = 'mongodb://root:example@localhost:27017/admin';
-   const client = new MongoClient(url);
-    
-   
-    const dbName = 'app'; // database name
-  
-    await client.connect();
-    console.log('Connected successfully to server');
-    const db = client.db(dbName);
-    const collection = db.collection('bevs'); // collection name
-  
-  
-    const findResult = await collection.find({}).toArray();
-    console.log('Found documents =>', findResult);
-  
-    
-  
-   //==========================================================
-  
-  
-  
-  
-  
     // at the end of the process we need to send something back.
-    return Response.json(findResult)
+    return NextResponse.json(bevList, { status: 200 })
   }
+  catch (err) {
+    console.error("Error in getProducts API:", err);
+    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+  } 
+}
   
   

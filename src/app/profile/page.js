@@ -24,9 +24,9 @@ export default function ProfilePage() {
     }
   };
 
-  useEffect(() => {
-    getUserDetails();
-  }, []);
+  // useEffect(() => {
+  //   getUserDetails();
+  // }, []);
 
   return (
     <div>
