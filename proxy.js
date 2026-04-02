@@ -11,7 +11,7 @@ if (request.nextUrl.searchParams.has("_rsc")) {
 }
 
 
-  // These API routes must ALWAYS bypass auth
+  // These API routes bypass auth
   if (request.method === 'POST' && (path === '/api/login' || path === '/api/register' || path === '/api/logout'|| path === '/api/profile')) {
     return NextResponse.next();
   }

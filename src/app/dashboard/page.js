@@ -79,8 +79,11 @@ export default function Page() {
             <div className='col-span-2'>
             <Image src={`/${item.image}`} width={200} height={100} className="h-auto w-auto" alt="car image" loading="eager"  />
             </div>
+            <div>
+              <input type="number" id={`quantity${item._id}`} name={`quantity${item._id}`} min="1" max="10" defaultValue={1} />
+            </div>
             <button className="flex justify-center rounded-md bg-indigo-500 px-3 py-1.5
-             text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" onClick={() => putInCart(item.make)}> Add to cart </button>
+             text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" onClick={() => putInCart([item._id, document.getElementById(`quantity${item._id}`).value])}> Add to cart </button>
           </div>
         ))
       }

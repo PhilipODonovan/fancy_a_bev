@@ -8,7 +8,7 @@ export async function GET(req, res) {
 
     // Make a note we are on
     // the api. This goes to the console.
-  console.log("in the api page")
+  console.log("in the getProducts api page")
 
 
   connect();
