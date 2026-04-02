@@ -2,6 +2,10 @@
 import * as React from 'react';
 import Image from 'next/image';
 
+
+
+
+
 import { useState, useEffect } from 'react'
 
 
@@ -22,7 +26,7 @@ export default function Page() {
  
  
   useEffect(() => {
-    fetch('api/getProducts')
+    fetch('api/getOrders')
       .then((res) => res.json())
       .then((data) => {
         setData(data)
@@ -47,7 +51,7 @@ export default function Page() {
         <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
           
 
-                <div style={{fontSize: '40px'}} > Dashboard</div>
+                <div style={{fontSize: '40px'}} > Checkout</div>
         <div>
       {
         data.map((item, i) => (
@@ -56,21 +60,23 @@ export default function Page() {
             Unique ID: {item._id}
             </div>
             <div className="flex col-span-4">
-            {item.make}
+             
+            {item.user ? `User ID: ${item.user.email}` : "No user ID"}
+            <br></br>
             - 
-            {item.model}
-            - 
-            {item.variant}
+            {item.bev ? `${item.bev.make} ${item.bev.model}` : "No bev ID"}
+            <br></br>
+            {item.qty ? `Quantity: ${item.qty}` : "No quantity"}
             </div>
             <div>
             - €
-            {item.price}
+            {item.bev.price}
             </div>
-            <div className='col-span-2'>
-            <Image src={`/${item.image}`} width={200} height={100} className="h-auto w-auto" alt="car image" loading="eager"  />
+            {/* <div className='col-span-2'>
+            <Image src={`/${item.bev.image}`} width={200} height={100} className="h-auto w-auto" alt="car image" loading="eager"  />
             </div>
             <button className="flex justify-center rounded-md bg-indigo-500 px-3 py-1.5
-             text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" onClick={() => putInCart(item.make)}> Add to cart </button>
+             text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" onClick={() => putInCart(item.make)}> Add to cart </button> */}
           </div>
         ))
       }

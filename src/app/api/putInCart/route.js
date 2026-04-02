@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 import { connect } from "@/lib/dbConfig";
 import Order from "@/models/orderModel";  
-import { Quando } from 'next/font/google';
-import { split } from 'postcss/lib/list';
+
+
 import User from '@/models/userModel';
 import Bev from '@/models/bevModel';
 import { getDataFromToken } from '@/lib/getDataFromToken';
@@ -32,12 +32,14 @@ export async function GET(req, res) {
     // Look up the user and exclude the password
     const loggedinUser = await User.findOne({ _id: userId });
     const bevOrder = await Bev.findOne({ _id: pname.split(',')[0] });
+    const qty = pname.split(',')[1] || 1; // Default to 1 if quantity is not provided
 
     const newOrder = new Order({
       user: loggedinUser, // Use the user from the database
       bev: bevOrder, // Use the bev from the database
-      qty: pname.split(',')[1] || 1, // split the string to get the quantity, which is the second part of the string after the comma
+      qty: qty, // Use the quantity from the split string
       invoice: 'INV' + Date.now(),
+      status: 'pending'
     });
     
     // Save the order to the database

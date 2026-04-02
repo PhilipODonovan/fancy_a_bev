@@ -23,6 +23,10 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please enter invoice number"],
     },
+    status: {
+        type: String,
+        required: [true, "Please enter order status"],
+    }
 },
     { timestamps: true }
 );

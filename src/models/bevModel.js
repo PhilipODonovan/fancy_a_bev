@@ -71,6 +71,6 @@ const bevSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Bev = mongoose.models.Bev || mongoose.model("Bev", bevSchema);
+const Bev = mongoose.models.bevs|| mongoose.model("bevs", bevSchema);
 
 export default Bev;
