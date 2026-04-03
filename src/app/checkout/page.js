@@ -1,90 +1,98 @@
 'use client';
-import * as React from 'react';
-import Image from 'next/image';
 
-
-
-
-
-import { useState, useEffect } from 'react'
-
-
-
-
-
+import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function Page() {
+  const [data, setData] = useState(null);
 
-
-
-
-
-
-
-
-  const [data, setData] = useState(null)
- 
- 
   useEffect(() => {
-    fetch('api/getOrders')
+    fetch("/api/getOrders")
       .then((res) => res.json())
-      .then((data) => {
-        setData(data)
-      })
+      .then((data) => setData(data));
+  }, []);
 
+  if (!data) return <p>No data</p>;
 
-
-  }, [])
- 
-
-  if (!data) return <p>No data</p>
-
-
-
-
-
-
-  
   return (
- 
-  
-        <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-          
+    <div className="flex min-h-full flex-col px-6 py-12 lg:px-8">
+      <h1 className="text-4xl font-semibold mb-8">Checkout</h1>
 
-                <div style={{fontSize: '40px'}} > Checkout</div>
-        <div>
-      {
-        data.map((item, i) => (
-          <div style={{padding: '20px'}} key={i} className="flex-grid col-span-4 gap-4" >
-            <div>
-            Unique ID: {item._id}
-            </div>
-            <div className="flex col-span-4">
-             
-            {item.user ? `User ID: ${item.user.email}` : "No user ID"}
-            <br></br>
-            - 
-            {item.bev ? `${item.bev.make} ${item.bev.model}` : "No bev ID"}
-            <br></br>
-            {item.qty ? `Quantity: ${item.qty}` : "No quantity"}
-            </div>
-            <div>
-            - €
-            {item.bev.price}
-            </div>
-            {/* <div className='col-span-2'>
-            <Image src={`/${item.bev.image}`} width={200} height={100} className="h-auto w-auto" alt="car image" loading="eager"  />
-            </div>
-            <button className="flex justify-center rounded-md bg-indigo-500 px-3 py-1.5
-             text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500" onClick={() => putInCart(item.make)}> Add to cart </button> */}
-          </div>
-        ))
-      }
+      <div className="p-6">
+        <div className="overflow-x-auto shadow-md rounded-lg border border-gray-200">
+          <table className="min-w-full border-collapse text-sm">
+            <thead className="bg-green-900 text-white text-left">
+              <tr>
+                <th className="px-4 py-2">User</th>
+                <th className="px-4 py-2">Car</th>
+                <th className="px-4 py-2">img</th>
+                <th className="px-4 py-2">Quantity</th>
+                <th className="px-4 py-2">Price</th>
+                <th className="px-4 py-2">Total</th>
+                <th className="px-4 py-2">Order Date</th>
+                <th className="px-4 py-2">Status</th>
+                <th className="px-4 py-2">Action</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200 bg-white text-gray-700">
+              {data.map((item) => (
+                <tr key={item._id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3">
+                    {item.user?.email ?? "No user"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {item.bev
+                      ? `${item.bev.make} ${item.bev.model}`
+                      : "No car"}
+                  </td>
+                  
+                  <td className="px-4 py-3">
+                    <Image src={item.bev.image ? `/${item.bev.image}` : "/fancyabev.png"} alt="Car Image" className="w-16 h-16 object-cover rounded-md"  width={200} height={100}/>
+                  </td>
+                    
+                  <td className="px-4 py-3">
+                    {item.qty ?? "No qty"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {item.bev
+                      ? `€${item.bev.price}`
+                      : "No price"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {item.bev && item.qty
+                      ? `€${item.bev.price * item.qty}`
+                      : "No total"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {item.createdAt
+                      ? new Date(item.createdAt).toLocaleDateString()
+                      : "No date"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    {item.status ?? "No status"}
+                  </td>
+
+                  <td className="px-4 py-3">
+                    <button
+                      className="rounded-md bg-green-700 px-3 py-1.5 text-white text-xs font-semibold hover:bg-green-400"
+                      onClick={() => alert(`Order ID: ${item._id}`)}
+                    >
+                      Update
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+
+          </table>
+        </div>
+      </div>
     </div>
-      
-</div>  
-    );
+  );
 }
-
-
-

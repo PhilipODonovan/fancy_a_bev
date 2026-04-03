@@ -18,7 +18,7 @@ export async function GET(req, res) {
     console.log('Connected successfully to server');
     const OrderList = await Order.find({})
     .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
-    .populate({path: 'bev', select: 'make model variant price'}); // Populate bev details   
+    .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details   
 
   
     console.log('Found documents =>', OrderList);
