@@ -11,7 +11,7 @@ export async function GET(req, res) {
   console.log("in the getProducts api page")
 
 
-  connect();
+  await connect();
 
     console.log('Connected successfully to server');
     const bevList = await Bev.find({});

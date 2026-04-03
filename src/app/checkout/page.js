@@ -25,7 +25,7 @@ export default function Page() {
               <tr>
                 <th className="px-4 py-2">User</th>
                 <th className="px-4 py-2">Car</th>
-                <th className="px-4 py-2">img</th>
+                <th className="px-4 py-2">Image</th>
                 <th className="px-4 py-2">Quantity</th>
                 <th className="px-4 py-2">Price</th>
                 <th className="px-4 py-2">Total</th>
