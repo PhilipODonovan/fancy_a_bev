@@ -6,12 +6,30 @@ import Image from "next/image";
 
 export default function Page() {
   const [data, setData] = useState(null);
+  const [unauthorized, setUnauthorized] = useState(false);
+
 
   useEffect(() => {
-    fetch("/api/getUsers")
-      .then((res) => res.json())
-      .then((data) => setData(data));
+    fetch("/api/getUsers", { credentials: "include" })
+      .then(res => {
+        if (res.status === 401) {
+          setUnauthorized(true);
+          return null;
+        }
+        return res.json();
+      })
+      .then(json => setData(json))
+      .catch(() => setUnauthorized(true));
   }, []);
+
+  if (unauthorized) {
+    return (
+      <div className="text-red-500 p-4 text-center text-xl font-bold">
+        Unauthorized — Admin Access Only
+      </div>
+    );
+  }
+
 
   if (!data) return <p>No data</p>;
 

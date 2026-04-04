@@ -1,31 +1,31 @@
+import { NextResponse } from "next/server";
 import { connect } from "@/lib/dbConfig";
-import { NextResponse, Response } from 'next/server'  
-import User from '@/models/userModel';
+import User from "@/models/userModel";
+import { verifyToken } from "@/lib/verifyToken";
+import { verifyTokenFromRequest } from "@/lib/verifyTokenFromRequest";
 
-export async function GET(req, res) {
-
+export async function GET(request) {
   try {
+    await connect();
 
-    // Make a note we are on
-    // the api. This goes to the console.
-  console.log("in the getUsers api page")
+    const user = await verifyTokenFromRequest(request);   
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    console.log("Decoded user:", user);
 
+    // check if user is admin
+    const dbUser = await User.findById(user.id).select("isAdmin");
+    if (!dbUser?.isAdmin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  await connect();
-
-    console.log('Connected successfully to server');
-    const userList = await User.find({});
-  
-    // console.log('Found documents =>', userList);
-
-  
-    // at the end of the process we need to send something back.
-    return NextResponse.json(userList, { status: 200 })
+    // fetch all users
+    const users = await User.find({}).select("-password");
+    return NextResponse.json(users, { status: 200 });
+  } catch (err) {
+    console.error("Error in admin users API:", err);
+    return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
-  catch (err) {
-    console.error("Error in getUsers API:", err);
-    return NextResponse.json({ error: "Failed to fetch users" }, { status: 500 });
-  } 
-}
-  
+} 
   
