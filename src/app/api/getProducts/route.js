@@ -14,6 +14,7 @@ export async function GET(req, res) {
   await connect();
 
     console.log('Connected successfully to server');
+    
     const bevList = await Bev.find({});
   
     // console.log('Found documents =>', bevList);

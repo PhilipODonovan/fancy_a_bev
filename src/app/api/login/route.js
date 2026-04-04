@@ -38,6 +38,7 @@ export async function POST(req) {
         id: existingUser._id,
         username: existingUser.username,
         email: existingUser.email,
+        isAdmin: existingUser.isAdmin
       },
       process.env.TOKEN_SECRET,
       { expiresIn: "1d" }

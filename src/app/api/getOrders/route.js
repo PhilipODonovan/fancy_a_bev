@@ -3,6 +3,7 @@ import { NextResponse, Response } from 'next/server'
 import Order from "@/models/orderModel";
 import User from '@/models/userModel';
 import Bev from '@/models/bevModel';
+import { verifyTokenFromRequest } from "@/lib/verifyTokenFromRequest";
 
 export async function GET(req, res) {
 
@@ -15,10 +16,33 @@ export async function GET(req, res) {
 
   connect();
 
-    console.log('Connected successfully to server');
-    const OrderList = await Order.find({})
-    .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
-    .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details   
+  const currentuser = await verifyTokenFromRequest(req);
+  console.log("Decoded user from token:", currentuser);
+
+      if (!currentuser) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+        
+      let OrderList;
+      // check if user is admin, only show all users orders if admin, otherwise show only the logged in users orders
+      // const dbUser = await User.findById(currentuser.id).select("isAdmin");
+
+      if (!currentuser.isAdmin) {
+          OrderList = await Order.find({ user: currentuser.id }) //id not _id because its coming from the jwt decoding 
+          .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
+          .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
+      }
+      else {
+          OrderList = await Order.find({})  
+          .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
+          .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
+      }
+
+    console.log('Connected successfully to server, current user:', currentuser.email);
+
+    // const OrderList = await Order.find({ user: currentuser.id }) //id not _id because its coming from the jwt decoding 
+    // .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
+    // .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details   
 
   
     console.log('Found documents =>', OrderList);

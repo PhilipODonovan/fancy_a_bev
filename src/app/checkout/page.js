@@ -75,7 +75,14 @@ export default function Page() {
                   </td>
 
                   <td className="px-4 py-3">
-                    {item.status ?? "No status"}
+                    <select
+                      id={`status${item._id}`}
+                      defaultValue={item.status ?? "Pending"}  >
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Processing</option>
+                      <option value="Shipped">Shipped</option>
+                      <option value="Delivered">Delivered</option>
+                    </select> 
                   </td>
 
                   <td className="px-4 py-3">
