@@ -16,7 +16,7 @@ export async function GET(req, res) {
     console.log('Connected successfully to server');
     const bevList = await Bev.find({});
   
-    console.log('Found documents =>', bevList);
+    // console.log('Found documents =>', bevList);
 
   
     // at the end of the process we need to send something back.
