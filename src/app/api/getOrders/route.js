@@ -14,7 +14,7 @@ export async function GET(req, res) {
   console.log("in the getOrders api page")
 
 
-  connect();
+  await connect();
 
   const currentuser = await verifyTokenFromRequest(req);
   console.log("Decoded user from token:", currentuser);
@@ -49,7 +49,19 @@ export async function GET(req, res) {
 
   
     // at the end of the process we need to send something back.
-    return NextResponse.json(OrderList, { status: 200 })
+
+return NextResponse.json(
+  {
+    orders: OrderList,
+    currentUser: {
+      id: currentuser.id,
+      email: currentuser.email,
+      isAdmin: currentuser.isAdmin  
+    }
+  },
+  { status: 200 }
+);
+
   }
   catch (err) {
     console.error("Error in getOrders API:", err);

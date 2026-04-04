@@ -36,7 +36,9 @@ export default function Page() {
             </thead>
 
             <tbody className="divide-y divide-gray-200 bg-white text-gray-700">
-              {data.map((item) => (
+
+              {/* // Map through orders and display them in the table */}
+              {data.orders?.map((item) => (
                 <tr key={item._id} className="hover:bg-gray-50">
                   <td className="px-4 py-3">
                     {item.user?.email ?? "No user"}
@@ -68,22 +70,38 @@ export default function Page() {
                       : "No total"}
                   </td>
 
-                  <td className="px-4 py-3">
-                    {item.createdAt
-                      ? new Date(item.createdAt).toLocaleDateString()
-                      : "No date"}
-                  </td>
-
-                  <td className="px-4 py-3">
-                    <select
-                      id={`status${item._id}`}
-                      defaultValue={item.status ?? "Pending"}  >
+                <td className="px-4 py-3">
+                <select
+                  id={`status${item._id}`}
+                  defaultValue={item.status ?? "Pending"}
+                  // disabled={!data.currentUser?.isAdmin}
+                  // className={`px-2 py-1 border rounded-md ${
+                  //   !data.currentUser?.isAdmin
+                  //     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  //     : ""
+                  // }`}
+                >
+                  {!data.currentUser?.isAdmin ? (
+                     <>
+                      <option value="Pending">Pending</option>
+                      <option value="Processing">Finalize</option>
+                      <option value="Cancelled">Cancel</option>
+                    </>
+                  ) : (
+                    <>
                       <option value="Pending">Pending</option>
                       <option value="Processing">Processing</option>
                       <option value="Shipped">Shipped</option>
                       <option value="Delivered">Delivered</option>
-                    </select> 
-                  </td>
+                      <option value="Cancelled">Cancelled</option>
+                    </>
+                  )}
+                </select>
+              </td>
+
+                    
+                 
+
 
                   <td className="px-4 py-3">
                     <button
