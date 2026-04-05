@@ -12,7 +12,7 @@ export async function POST(req, res) {
 
     // Make a note we are on
     // the api. This goes to the console.
-  console.log("in the updateOrders api page")
+  console.log("in the updateUsers api page")
 
 
   await connect();
@@ -26,36 +26,36 @@ export async function POST(req, res) {
 
     // console.log("RAW REQUEST BODY:", await req.text()); only uncomment dfor debugging, it will consume the body and make it unavailable for later parsing
 
-// get the orderId, status and qty from the request body, check that its not null and update
-    const { orderId, status, qty } = await req.json();
-    console.log("parsed JSON:", { orderId, status, qty });
+// get the userId, isAdmin from the request body, check that its not null and update
+    const {userId, isAdmin } = await req.json();
+    console.log("parsed JSON:", { userId, isAdmin });
       
     const updateData = {};
-    if (typeof status !== "undefined") updateData.status = status;
-    if (typeof qty !== "undefined") updateData.qty = qty;
+    
+    if (typeof isAdmin !== "undefined") updateData.isAdmin = isAdmin;
 
     console.log("Final updateData:", updateData);
 
-    const order = await Order.findByIdAndUpdate(orderId, updateData, { new: true });
+    const user= await User.findByIdAndUpdate(userId, updateData, { new: true });
 
-    if (!order) {
-        return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    if (!user) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
   
-    console.log("Updated Order:", order)
+    console.log("Updated User:", user)
 
 
 return NextResponse.json(
   {
-    message: "Order updated successfully",
+    message: "User updated successfully",
   },
   { status: 200 }
 );
 
   }
   catch (err) {
-    console.error("Error in updateOrders API:", err);
-    return NextResponse.json({ error: "Failed to update order" }, { status: 500 });
+    console.error("Error in updateUsers API:", err);
+    return NextResponse.json({ error: "Failed to update user" }, { status: 500 });
   } 
 }
   

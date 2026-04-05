@@ -33,6 +33,32 @@ export default function Page() {
 
   if (!data) return <p>No data</p>;
 
+    
+const handleRoleChange = async (userId, newRole) => {
+  try {
+    console.log("Sending:", { userId, role: newRole });
+    const res = await fetch("/api/updateUsers", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",  
+        body: JSON.stringify({ 
+        userId: userId,
+        isAdmin: newRole === "true"   // convert dropdown string to boolean
+})
+
+    });
+
+    if (!res.ok) {
+      alert("Failed to update role");
+      return;
+    }
+
+    alert("Role updated successfully!");
+  } catch (e) {
+    alert("Error updating user role");
+  }
+};
+
   return (
     <div className="flex min-h-full flex-col px-6 py-12 lg:px-8">
       <h1 className="text-4xl font-semibold mb-8">Users</h1>
@@ -45,7 +71,7 @@ export default function Page() {
                 <th className="px-4 py-2">User</th>
                 <th className="px-4 py-2">Email</th>
                 <th className="px-4 py-2">Role</th>
-                <th className="px-4 py-2"></th>
+                {/* <th className="px-4 py-2"></th> */}
               </tr>
             </thead>
 
@@ -66,10 +92,11 @@ export default function Page() {
                     
                   <td className="px-4 py-3">
                     <select
-                      id={`role${item._id}`}
-                      defaultValue={item.isAdmin ? "Manager" : "Customer"}  >
-                        <option value="Customer">Customer</option>
-                        <option value="Manager">Manager</option>
+                        onChange={(e) => handleRoleChange(item._id, e.target.value)}
+                        id={`role${item._id}`}
+                        defaultValue={item.isAdmin ? "Manager" : "Customer"}  >
+                        <option value="false">Customer</option>
+                        <option value="true">Manager</option>
                       </select>
                     
                   </td>
@@ -78,14 +105,14 @@ export default function Page() {
 
 
 
-                  <td className="px-4 py-3">
+                  {/* <td className="px-4 py-3">
                     <button
                       className="rounded-md bg-blue-700 px-3 py-1.5 text-white text-xs font-semibold hover:bg-blue-600"
                       onClick={() => alert(`User ID: ${item._id}`)}
                     >
                       Update
                     </button>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

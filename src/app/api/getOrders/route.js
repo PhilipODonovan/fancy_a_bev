@@ -28,12 +28,12 @@ export async function GET(req, res) {
       // const dbUser = await User.findById(currentuser.id).select("isAdmin");
 
       if (!currentuser.isAdmin) {
-          OrderList = await Order.find({ user: currentuser.id }) //id not _id because its coming from the jwt decoding 
+          OrderList = await Order.find({ user: currentuser.id ,status: { $in: ["Pending", "Processing", "Shipped"] }}) //id not _id because its coming from the jwt decoding 
           .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
           .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
       }
       else {
-          OrderList = await Order.find({})  
+          OrderList = await Order.find({status: { $in: ["Pending", "Processing", "Shipped"] }})  
           .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
           .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
       }
