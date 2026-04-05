@@ -57,6 +57,32 @@ const handleQtyChange = async (orderId, newQty) => {
       alert("Error updating quantity");
     }
   };
+  // Create an array of order IDs to send to the completeOrder function
+  const orderList = data.orders?.map(item => item._id) || [];
+
+  const completeOrder = async (orderList) => {
+    try {
+      console.log("Sending:", { orderList });
+      const res = await fetch("/api/completeOrders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ orderList })
+      });
+
+      if (!res.ok) {
+        alert("Failed to complete order");
+        return;
+      }
+
+      alert("Order completed successfully!");
+    } catch (e) {
+      alert("Error completing order");
+    }
+  };
+
+
+
 
   return (
     <div className="flex min-h-full flex-col px-6 py-12 lg:px-8">
@@ -73,9 +99,9 @@ const handleQtyChange = async (orderId, newQty) => {
                 <th className="px-4 py-2">Quantity</th>
                 <th className="px-4 py-2">Price</th>
                 <th className="px-4 py-2">Total</th>
-                <th className="px-4 py-2">Order Date</th>
+                {/* <th className="px-4 py-2">Order Date</th> */}
                 <th className="px-4 py-2">Status</th>
-                <th className="px-4 py-2">Action</th>
+                {/* <th className="px-4 py-2">Action</th> */}
               </tr>
             </thead>
 
@@ -130,17 +156,17 @@ const handleQtyChange = async (orderId, newQty) => {
                 }}
                   id={`status${item._id}`}
                   defaultValue={item.status ?? "Pending"}
-                  // disabled={!data.currentUser?.isAdmin}
-                  // className={`px-2 py-1 border rounded-md ${
-                  //   !data.currentUser?.isAdmin
-                  //     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                  //     : ""
-                  // }`}
+                  disabled={!data.currentUser?.isAdmin}
+                  className={`px-2 py-1 border rounded-md ${
+                    !data.currentUser?.isAdmin
+                      ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                      : ""
+                  }`}
                 >
                   {!data.currentUser?.isAdmin ? (
                      <>
                       <option value="Pending">Pending</option>
-                      <option value="Processing">Finalize</option>
+                      <option value="Processing">Processing</option>
                       <option value="Cancelled">Cancel</option>
                     </>
                   ) : (
@@ -160,19 +186,33 @@ const handleQtyChange = async (orderId, newQty) => {
 
 
                   <td className="px-4 py-3">
-                    <button
+                    {/* <button
                       className="rounded-md bg-green-700 px-3 py-1.5 text-white text-xs font-semibold hover:bg-green-400"
                       onClick={() => alert(`Order ID: ${item._id}`)}
                     >
                       Update
-                    </button>
+                    </button> */}
                   </td>
                 </tr>
               ))}
             </tbody>
+                   
 
           </table>
+                     
+        </div>  
+        <div className="flex justify-center gap-4 mt-6">
+          <button
+                      className="rounded-md bg-green-700 px-3 py-1.5 text-white text-xs font-semibold hover:bg-green-400"
+                      onClick={(e) => {
+                  console.log("Complete Orders:", orderList);
+                  completeOrder(orderList);
+                }}
+                    >
+                      Complete Order
+                    </button>
         </div>
+        
       </div>
     </div>
   );
