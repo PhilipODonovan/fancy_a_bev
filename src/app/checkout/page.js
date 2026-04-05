@@ -14,6 +14,50 @@ export default function Page() {
 
   if (!data) return <p>No data</p>;
 
+  
+const handleStatusChange = async (orderId, newStatus) => {
+  try {
+    console.log("Sending:", { orderId, status: newStatus });
+    const res = await fetch("/api/updateOrders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ orderId, status: newStatus})
+    });
+
+    if (!res.ok) {
+      alert("Failed to update status");
+      return;
+    }
+
+    alert("Status updated successfully!");
+  } catch (e) {
+    alert("Error updating order");
+  }
+};
+
+
+const handleQtyChange = async (orderId, newQty) => {
+    try {
+      console.log("Sending:", { orderId, qty: newQty });
+      const res = await fetch("/api/updateOrders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ orderId, qty: newQty })
+      });
+
+      if (!res.ok) {
+        alert("Failed to update quantity");
+        return;
+      }
+
+      alert("Quantity updated successfully!");
+    } catch (e) {
+      alert("Error updating quantity");
+    }
+  };
+
   return (
     <div className="flex min-h-full flex-col px-6 py-12 lg:px-8">
       <h1 className="text-4xl font-semibold mb-8">Checkout</h1>
@@ -55,7 +99,15 @@ export default function Page() {
                   </td>
                     
                   <td className="px-4 py-3">
-                    {item.qty ?? "No qty"}
+                    <input
+                      type="number"
+                      min="1"
+                      value={item.qty ?? "No qty"}
+                      onChange={(e) => {
+                        console.log("Updating:", item._id, e.target.value);
+                        handleQtyChange(item._id, parseInt(e.target.value));
+                      }}
+                    />  
                   </td>
 
                   <td className="px-4 py-3">
@@ -72,6 +124,10 @@ export default function Page() {
 
                 <td className="px-4 py-3">
                 <select
+                onChange={(e) => {
+                  console.log("Updating status:", item._id, e.target.value);
+                  handleStatusChange(item._id, e.target.value);
+                }}
                   id={`status${item._id}`}
                   defaultValue={item.status ?? "Pending"}
                   // disabled={!data.currentUser?.isAdmin}

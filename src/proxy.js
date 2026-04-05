@@ -40,6 +40,9 @@ export const config = {
     '/dashboard/(.*)',
     '/checkout',
     '/checkout/(.*)',
-    '/logout'
+    '/logout',
+    '/admin',
+    '/admin/(.*)',
+    '/api/getUsers',
   ]
 };
