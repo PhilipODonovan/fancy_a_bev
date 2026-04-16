@@ -4,6 +4,8 @@ import Order from "@/models/orderModel";
 import User from '@/models/userModel';
 import Bev from '@/models/bevModel';
 import { verifyTokenFromRequest } from "@/lib/verifyTokenFromRequest";
+import { getDataFromToken } from '@/lib/getDataFromToken';
+
 
 export async function GET(req, res) {
 
@@ -15,8 +17,12 @@ export async function GET(req, res) {
 
 
   await connect();
+  const userId = await getDataFromToken(req);
+    // Look up the user and exclude the password
+    const currentuser = await User.findOne({ _id: userId }).select('-password');
+  // const currentuser = await verifyTokenFromRequest(req);
 
-  const currentuser = await verifyTokenFromRequest(req);
+
   console.log("Decoded user from token:", currentuser);
 
       if (!currentuser) {
@@ -28,12 +34,24 @@ export async function GET(req, res) {
       // const dbUser = await User.findById(currentuser.id).select("isAdmin");
 
       if (!currentuser.isAdmin) {
-          OrderList = await Order.find({ user: currentuser.id ,status: { $in: ["Pending", "Processing", "Shipped"] }}) //id not _id because its coming from the jwt decoding 
+        console.log("Regular user detected, fetching orders for user ID:", currentuser.id);
+          OrderList = await Order.find({ user: currentuser.id ,status: { $in: [
+            /pending/i,
+                  /processing/i,
+                  /shipped/i
+          ] }}) //id not _id because its coming from the jwt decoding 
           .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
           .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
       }
       else {
-          OrderList = await Order.find({status: { $in: ["Pending", "Processing", "Shipped"] }})  
+        console.log("Admin user detected, fetching all orders...");
+          OrderList = await Order.find(
+            { status: { $in: [
+                  /pending/i,
+                  /processing/i,
+                  /shipped/i
+            ] } }
+          )  
           .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
           .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
       }
