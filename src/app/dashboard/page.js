@@ -65,20 +65,20 @@ return (
       {paginatedData.map((item, i) => (
         <div
           key={i}
-          className="col-span-1 bg-white rounded-lg shadow-md p-4 flex flex-col items-center"
+          className="col-span-1 dark:bg-gray-500 rounded-lg shadow-md p-4 flex flex-col items-center"
         >
           <div className="bg-green-900 text-white w-full text-left p-4 rounded-lg mb-3">
             {item.make} {item.model} {item.variant}
           </div>
 
-          <div className="text-xl font-semibold mb-3">
+          <div className="text-xl text-gray-500 dark:text-gray-300 font-semibold mb-3">
             €{item.price}
           </div>
 
           <div className="mb-3">
             <Image src={'/' + item.image} width={200} height={100} className="h-auto w-auto" alt="car image" loading="eager" /> 
           </div>
-          <div className="mb-3 justify-content">
+          <div className="mb-3 justify-content text-gray-500 dark:text-gray-300">
               <input
                 type="number"
                 id={`quantity${item._id}`}
