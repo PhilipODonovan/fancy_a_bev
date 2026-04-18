@@ -79,7 +79,13 @@ const handleQtyChange = async (orderId, newQty) => {
     } catch (e) {
       alert("Error completing order");
     }
-  };
+  }
+  
+  const invTotal = data.orders?.reduce((total, item) => {
+    const itemTotal = item.bev && item.qty ? item.bev.price * item.qty : 0;
+    return total + itemTotal;
+  }, 0);
+
 
 
 
@@ -184,17 +190,21 @@ const handleQtyChange = async (orderId, newQty) => {
                     
                  
 
-
-                  <td className="px-4 py-3">
-                    {/* <button
-                      className="rounded-md bg-green-700 px-3 py-1.5 text-white text-xs font-semibold hover:bg-green-400"
-                      onClick={() => alert(`Order ID: ${item._id}`)}
-                    >
-                      Update
-                    </button> */}
-                  </td>
                 </tr>
-              ))}
+                
+              )
+              )}
+  
+            <tr className="font-semibold bg-gray-100">
+              <td colSpan="5" className="px-4 py-3 text-right">
+                Total
+              </td>
+              <td className="px-4 py-3">
+                €{invTotal.toFixed(2)}
+              </td>
+              <td />
+            </tr>
+
             </tbody>
                    
 

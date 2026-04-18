@@ -45,9 +45,11 @@ export async function GET(req, res) {
     // Save the order to the database
     await newOrder.save(); 
 
-    alert("Added to cart!");
+    
 
-    return NextResponse.json({ data: "true" }, { status: 201 });
+    return NextResponse.json({ success: "true", message: "Item added to cart successfully!" }
+        , { status: 201 }
+      );
 
 
   // var myobj = { pname: pname, username: "sample@test.com"};

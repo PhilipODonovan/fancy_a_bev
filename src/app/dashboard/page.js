@@ -15,12 +15,25 @@ export default function Page() {
   //
   // function for putting items into the shopping cart.
   //
-  function putInCart(pname){
+  async function putInCart(pname){
 
     console.log("putting in cart: " + pname)
 
 
-    fetch("api/putInCart?pname="+pname);
+    
+
+const res = await fetch(`/api/putInCart?pname=${pname}`);
+  const data = await res.json();
+
+
+
+    
+// const data = res.json();
+
+if (data.success) {
+  alert("Added to cart!");
+}
+
 
 
  
