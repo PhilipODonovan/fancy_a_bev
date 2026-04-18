@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-connect();
+await connect();
 
 export async function POST(req) {
   console.log("In the login API");
@@ -22,15 +22,22 @@ export async function POST(req) {
         { status: 400 }
       );
     }
+    else {
+      console.log("User found with email:", existingUser.email);
+    } 
 
     // Check password
     const isPasswordValid = await bcryptjs.compare(password, existingUser.password);
     if (!isPasswordValid) {
+      console.log("Invalid password for user:", existingUser.email);
       return NextResponse.json(
         { error: "Invalid email or password" },
         { status: 400 }
       );
     }
+    else {
+      console.log("Password is valid for user:", existingUser.email);
+    } 
 
     // Create token
     const token = jwt.sign(

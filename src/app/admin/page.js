@@ -94,12 +94,13 @@ const handleRoleChange = async (userId, newRole) => {
                     <select
                         onChange={(e) => handleRoleChange(item._id, e.target.value)}
                         id={`role${item._id}`}
-                        defaultValue={item.isAdmin ? "Manager" : "Customer"}  >
+                        value={item.isAdmin ? "true" : "false"}  >
                         <option value="false">Customer</option>
                         <option value="true">Manager</option>
                       </select>
                     
                   </td>
+
 
 
 

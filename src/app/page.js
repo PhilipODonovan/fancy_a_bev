@@ -17,7 +17,7 @@ export default function Home() {
           src="/Lotus_Emeya-01@2x.jpg"
           alt="Fancy a Bev logo"
           width={200}
-          height={100}
+          height={200}
           priority
         />
           

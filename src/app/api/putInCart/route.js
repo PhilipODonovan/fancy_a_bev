@@ -45,7 +45,7 @@ export async function GET(req, res) {
     // Save the order to the database
     await newOrder.save(); 
 
-    alert("Added to cart");
+    alert("Added to cart!");
 
     return NextResponse.json({ data: "true" }, { status: 201 });
 

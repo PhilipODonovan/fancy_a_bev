@@ -39,10 +39,10 @@ console.log("RESPONSE BODY:", res.data);
       console.log("Sent pass:" + form.pass);
       router.push("/dashboard");
     } else {
-      setError("Login failed. Please try again.");
+      setError(res.data.message || "Login failed. Please try again!");
     }
   } catch (err) {
-    setError("An error occurred. Please try again.");
+    setError(err.response?.data?.message || "Login failed. Please try again");
   }
 };
 
@@ -122,6 +122,8 @@ console.log("RESPONSE BODY:", res.data);
                       Register here
                     </Link>
           </p>
+
+          <p>{error}</p>
 
         </div>
       </div>

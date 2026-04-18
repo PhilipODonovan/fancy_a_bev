@@ -17,7 +17,7 @@ export async function POST(req, res) {
 
   await connect();
 
-  const currentuser = await verifyTokenFromRequest(req);
+  const currentuser = verifyTokenFromRequest(req);
   console.log("Decoded user from token:", currentuser);
 
     if (!currentuser) {
@@ -45,6 +45,8 @@ export async function POST(req, res) {
     const invoiceNumber = firstOrder.invoice;
     console.log("Using invoice:", invoiceNumber);
 
+  
+
 for (const orderId of orderList) {
       await Order.findByIdAndUpdate(
         orderId,
@@ -56,10 +58,16 @@ for (const orderId of orderList) {
       );
     }
 
+  const InvTotal = await Order.aggregate([{ $match: { _id: { $in: orderList } } }, { $group: { _id: null, total: { $sum: "$totalPrice" } } }]);
+  console.log("Total price for invoice:", InvTotal);
+
+    
+
     return NextResponse.json(
       {
         message: "Orders completed successfully",
-        invoice: invoiceNumber
+        invoice: invoiceNumber,
+        invoiceTotal: InvTotal.length > 0 ? InvTotal[0].total : 0
       },
       { status: 200 }
     );
