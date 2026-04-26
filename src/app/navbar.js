@@ -94,7 +94,7 @@ export default function Navbar() {
               <MenuButton className="flex overflow-hidden rounded-full ring-1 ring-white/20 hover:ring-white/40 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                 <Image
                   alt="User avatar"
-                  src="/boo.png"
+                  src="/avatar.png"
                   className="h-8 w-8 rounded-full"
                   width='32'
                   height='32'   
@@ -108,10 +108,10 @@ export default function Navbar() {
                 <MenuItem as="a" href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-white/10">
                   Your profile
                 </MenuItem>
-                <MenuItem as="a" href="#" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg白/10">
+                <MenuItem as="a" href="/admin" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-white/10">
                   Settings
                 </MenuItem>
-                <MenuItem as="a" href="#" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-white/10">
+                <MenuItem as="a" href="/logout" className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-white/10">
                   Sign out
                 </MenuItem>
               </MenuItems>

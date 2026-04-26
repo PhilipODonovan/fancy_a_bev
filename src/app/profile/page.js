@@ -29,18 +29,18 @@ export default function ProfilePage() {
   // }, []);
 
   return (
-    <div>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
       <h1>Profile</h1>
 
       {/* Show error if any */}
       {error && <p style={{ color: 'red' }}>{error}</p>}
 
       {/* If no user yet */}
-      {!user && <h2>Nothing</h2>}
+      {!user && <h2>Click the button to view your profile</h2>}
 
       {/* When user exists, render safely */}
       {user && (
-        <div>
+        <div style={{ border: '1px solid #ccc', padding: '20px', borderRadius: '5px' }}> 
           <p><strong>ID:</strong> {user._id}</p>
           <p><strong>Username:</strong> {user.username}</p>
           <p><strong>Email:</strong> {user.email}</p>
@@ -49,7 +49,7 @@ export default function ProfilePage() {
         </div>
       )}
 
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={getUserDetails}>
+      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mt-2 rounded" onClick={getUserDetails}>
         Details
       </button>
     </div>
