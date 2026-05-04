@@ -2,15 +2,32 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
   const [data, setData] = useState(null);
 
-  useEffect(() => {
-    fetch("/api/getOrders")
-      .then((res) => res.json())
-      .then((data) => setData(data));
-  }, []);
+
+  
+const fetchOrders = async () => {
+  const res = await fetch("/api/getOrders", {
+    credentials: "include",
+    cache: "no-store",
+  });
+  const data = await res.json();
+  setData(data);
+  };
+
+
+  
+useEffect(() => {
+  const loadOrders = async () => {
+    await fetchOrders();
+  };
+
+  loadOrders();
+}, []);
+
 
   if (!data) return <p>No data</p>;
 
@@ -31,6 +48,8 @@ const handleStatusChange = async (orderId, newStatus) => {
     }
 
     alert("Status updated successfully!");
+    
+    await fetchOrders();
   } catch (e) {
     alert("Error updating order");
   }
@@ -53,6 +72,7 @@ const handleQtyChange = async (orderId, newQty) => {
       }
 
       alert("Quantity updated successfully!");
+      await fetchOrders();
     } catch (e) {
       alert("Error updating quantity");
     }
@@ -76,6 +96,8 @@ const handleQtyChange = async (orderId, newQty) => {
       }
 
       alert("Order completed successfully!");
+      await fetchOrders();
+      // window.location.reload(); // Refresh the page to show updated order status
     } catch (e) {
       alert("Error completing order");
     }
@@ -155,13 +177,12 @@ const handleQtyChange = async (orderId, newQty) => {
                   </td>
 
                 <td className="px-4 py-3">
+                
                 <select
-                onChange={(e) => {
-                  console.log("Updating status:", item._id, e.target.value);
-                  handleStatusChange(item._id, e.target.value);
-                }}
-                  id={`status${item._id}`}
-                  defaultValue={item.status ?? "Pending"}
+                  value={item.status ?? "Pending"}
+                  onChange={(e) => {
+                    handleStatusChange(item._id, e.target.value);
+                  }}
                   disabled={!data.currentUser?.isAdmin}
                   className={`px-2 py-1 border rounded-md ${
                     !data.currentUser?.isAdmin
@@ -169,6 +190,7 @@ const handleQtyChange = async (orderId, newQty) => {
                       : ""
                   }`}
                 >
+
                   {!data.currentUser?.isAdmin ? (
                      <>
                       <option value="Pending">Pending</option>

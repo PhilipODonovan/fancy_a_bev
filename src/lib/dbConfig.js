@@ -1,22 +1,21 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-async function connect() {
-    try {
-        await mongoose.connect(process.env.MONGO_URI);
-        const connection = mongoose.connection;
+export async function connect() {
+  try {
+    if (mongoose.connection.readyState >= 1) return;
 
-        connection.on('connected', () => {
-            console.log("MongoDB connected");
-        });
+    await mongoose.connect(process.env.MONGO_URI);
 
-        connection.on('error', (err) => {
-            console.log("MongoDB connection error: " + err);
-            process.exit(1);
-        });
+    mongoose.connection.on("connected", () => {
+      console.log("MongoDB connected");
+    });
 
-    } catch (error) {
-        console.log(error);
-    }
+    mongoose.connection.on("error", (err) => {
+      console.error("MongoDB connection error:", err);
+      process.exit(1);
+    });
+
+  } catch (error) {
+    console.error(error);
+  }
 }
-
-module.exports = { connect };

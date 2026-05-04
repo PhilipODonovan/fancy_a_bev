@@ -32,28 +32,25 @@ export async function GET(req, res) {
       let OrderList;
       // check if user is admin, only show all users orders if admin, otherwise show only the logged in users orders
       // const dbUser = await User.findById(currentuser.id).select("isAdmin");
+      const ACTIVE_STATUSES = ["pending", "Processing", "Shipped"];
 
       if (!currentuser.isAdmin) {
         console.log("Regular user detected, fetching orders for user ID:", currentuser.id);
-          OrderList = await Order.find({ user: currentuser.id ,status: { $in: [
-            /pending/i,
-                  /processing/i,
-                  /shipped/i
-          ] }}) //id not _id because its coming from the jwt decoding 
+          OrderList = await Order.find({ user: currentuser.id ,status: { $in: ACTIVE_STATUSES } }) //id not _id because its coming from the jwt decoding 
           .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
-          .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
+          .populate({path: 'bev', select: 'make model variant price image'}) // Populate bev details 
+          .lean(); // Convert Mongoose documents to plain JavaScript objects
       }
       else {
         console.log("Admin user detected, fetching all orders...");
+        
+
           OrderList = await Order.find(
-            { status: { $in: [
-                  /pending/i,
-                  /processing/i,
-                  /shipped/i
-            ] } }
+            { status: { $in:ACTIVE_STATUSES } }
           )  
           .populate({path: 'user', select: 'email'}) // Populate user details, excluding password
-          .populate({path: 'bev', select: 'make model variant price image'}); // Populate bev details 
+          .populate({path: 'bev', select: 'make model variant price image'}) // Populate bev details 
+          .lean(); // Convert Mongoose documents to plain JavaScript objects
       }
 
     console.log('Connected successfully to server, current user:', currentuser.email);
